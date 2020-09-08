@@ -1,5 +1,7 @@
 # users2csv
-discord的bot程序，以csv格式输出服务器/频道用户的一览表
+discord的bot程序，以csv格式输出服务器/频道用户的一览表 <br>
+
+![](https://github.com/walker9296/users2csv/blob/master/img/csv.png?raw=true) <br>
 
 # 前提条件
 - python 3.6+
