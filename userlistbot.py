@@ -24,28 +24,50 @@ async def on_command_error(error, ctx):
         print(error)
 
 @bot.command(pass_context=True)
-async def list(ctx):
-    fname = '{}.csv'.format(ctx.message.guild)
+async def lists(ctx):
+    isAdmin = ctx.message.channel.permissions_for(ctx.message.author).administrator
+    if not isAdmin:
+        permission_error = str('Sorry ' + ctx.message.author + ' you do not have permissions to do that!')
+        await ctx.send(content=permission_error)
+        return
+
+    fname = 'server.csv'
     with open(fname, mode='w') as f:
         f.write('joined_at, @name, name, discriminator\n')
         for m in ctx.message.guild.members:
-            #str = '{},{},{},{},{},{}\n'.format(m.joined_at.__format__('%Y-%m-%d'), m, m.display_name, m.name, m.discriminator, m.id)
             str = '{},{},{},{}\n'.format(m.joined_at.__format__('%Y-%m-%d'), m, m.name, m.discriminator)
             f.write(str)
     
-    await ctx.message.author.send(content="用户一览表", file=discord.File(fname))
-    await ctx.send(content="sent ok!")
+    await ctx.message.author.send(content="服务器-用户一览表", file=discord.File(fname))
+    await ctx.send(content="sent file ok!")
+    print("command >lists done!")
+
+@bot.command(pass_context=True)
+async def listc(ctx):
+    """isAdmin = ctx.message.channel.permissions_for(ctx.message.author).administrator
+    if not isAdmin:
+        permission_error = str('Sorry ' + ctx.message.author + ' you do not have permissions to do that!')
+        await ctx.send(content=permission_error)
+        return"""
+        
+    fname = 'channel.csv'
+    with open(fname, mode='w') as f:
+        f.write('joined_at, @name, name, discriminator\n')
+        for m in ctx.message.channel.members:
+            str = '{},{},{},{}\n'.format(m.joined_at.__format__('%Y-%m-%d'), m, m.name, m.discriminator)
+            f.write(str)
     
-    #await ctx.send(content="用户一览表", file=discord.File('temp.csv'))
-    print("command >list done!")
+    await ctx.message.author.send(content="频道-用户一览表", file=discord.File(fname))
+    await ctx.send(content="sent file ok!") 
+    print("command >listc done!")
 
 @bot.command()
 async def info(ctx):
-    embed = discord.Embed(title="users2csv bot", description="csv格式输出服务器的用户一览表", color=0xeee657)
+    embed = discord.Embed(title="users2csv bot", description="以csv格式输出服务器/频道用户的一览表", color=0xeee657)
     embed.add_field(name="作者", value="walker#9296")
     # Shows the number of servers the bot is member of.
     embed.add_field(name="服务器", value=f"{len(bot.guilds)}")
-    # give users a link to invite thsi bot to their server
+    # give users a link to invite this bot to their server
     embed.add_field(name="邀请", value="[邀请链接](https://discord.com/api/oauth2/authorize?client_id=750373870745288756&permissions=0&scope=bot)")
 
     await ctx.send(embed=embed)
@@ -56,7 +78,8 @@ bot.remove_command('help')
 @bot.command()
 async def help(ctx):
     embed = discord.Embed(title="users2csv bot", description="export user list.", color=0xeee657)
-    embed.add_field(name=">list", value="export user list", inline=False)
+    embed.add_field(name=">lists", value="export currnet server user list", inline=False)
+    embed.add_field(name=">listc", value="export currnet channel user list", inline=False)
     embed.add_field(name=">info", value="about this bot", inline=False)
     embed.add_field(name=">help", value="bot help", inline=False)
  
